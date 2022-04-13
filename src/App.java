@@ -38,7 +38,7 @@ public class App{
     System.out.print("Nombre de clients :");
     int nbrClients = scanner.nextInt();
     cmd = new cmd(nbrClients);
-    System.out.print("Nombre de clients : " + nbrClients);
+    System.out.print("Nombre de clients (pour le plat) : " + nbrClients);
     listCmd.add(cmd);
 
     System.out.print("\033[H\033[2J");
