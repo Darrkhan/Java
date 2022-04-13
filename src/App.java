@@ -2,8 +2,13 @@ import java.util.*;
 
 public class App{
   public static List<cmd>listCmd = new ArrayList<cmd>();
-  public static cmd cmd = new cmd(-1);
+  public static cmd cmd = null;
+  public static void clear(){
+    System.out.print("\033[H\033[2J");
+    System.out.flush();
+  }
   public static void main(String[] args){
+    clear();
     System.out.println("Quel écran souhaitez vous afficher?");
     System.out.println("1- Ecran prise de commande");
     System.out.println("2- Ecran cuisine");
@@ -16,33 +21,34 @@ public class App{
 
     if(choixEcran == 1){
 
-      System.out.print("\033[H\033[2J");
-      System.out.flush();
+      clear();
       System.out.println("ECRAN PRISE DE COMMANDE");
+      System.out.println("numéro de table :");
+      int nbrTable = scanner.nextInt();
+      clear();
+
+      System.out.print("Nombre de clients :");
+      int nbrClients = scanner.nextInt();
+      clear();
+
       System.out.println("1- Salade");
       System.out.println("2- Potage");
       System.out.println("3- Burgers");
       System.out.println("4- Pizzas");
       int choixPlat = scanner.nextInt();
-      Epc(choixPlat);
+      Epc(choixPlat, nbrClients, nbrTable);
     }
-
-
   }
 
-  public static void Epc(int choix){
+  public static void Epc(int choix, int nbrClients, int nbrTable){
     Scanner scanner = new Scanner(System.in);
-    System.out.print("\033[H\033[2J");
-    System.out.flush();
+    clear();
 
-    System.out.print("Nombre de clients :");
-    int nbrClients = scanner.nextInt();
-    cmd = new cmd(nbrClients);
+    cmd = new cmd(nbrClients, nbrTable);
     System.out.print("Nombre de clients (pour le plat hein) : " + nbrClients);
     listCmd.add(cmd);
 
-    System.out.print("\033[H\033[2J");
-    System.out.flush();
+    clear();
     if(choix == 2){
       System.out.println("1- oignons");
       System.out.println("2- tomates");
