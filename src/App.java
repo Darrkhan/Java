@@ -45,7 +45,6 @@ public class App{
     clear();
 
     cmd = new cmd(nbrClients, nbrTable);
-    System.out.print("Nombre de clients (pour le plat hein) : " + nbrClients);
     listCmd.add(cmd);
 
     clear();

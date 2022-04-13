@@ -10,5 +10,8 @@ public class cmd{
     this.clients = clients;
     this.table = table;
   }
-
+  public addPlat(int type, int option){
+    Plat platToAdd = new Plat(type, option);
+    listPlat.add(platToAdd);
+  }
 }
