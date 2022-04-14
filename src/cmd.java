@@ -10,8 +10,12 @@ public class cmd{
     this.clients = clients;
     this.table = table;
   }
-  public addPlat(int type, int option){
+  public void addPlat(int type, int option){
     Plat platToAdd = new Plat(type, option);
     listPlat.add(platToAdd);
+    System.out.println("Type : " + type);
+  }
+  public int getTable(){
+    return this.table;
   }
 }
