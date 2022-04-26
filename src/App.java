@@ -1,4 +1,5 @@
 import java.util.*;
+import java.io.*;
 
 
 public class App{
@@ -11,11 +12,19 @@ public class App{
     System.out.flush();
   }
 
-  public static void main(String[] args){
+  public static void main(String[] args) throws Exception{
     Scanner scanner = new Scanner(System.in);
     boolean run = true;
+    File homedir = new File(System.getProperty("user.home"));
+    File file = new File(homedir, "/Documents/Java/src/stock.txt");
     while(run){ //app loop
-      clear();
+      //clear();
+      if(file.exists()){
+        System.out.println("Exists");
+      }
+      else{
+        System.out.println("Does not Exists");
+      }
       System.out.println("Quel écran souhaitez vous afficher?");
       System.out.println("1- Ecran prise de commande");
       System.out.println("2- Ecran cuisine");
@@ -31,11 +40,15 @@ public class App{
         initEPC(scanner);
       }
       else if(choixEcran == 2){
+        clear();
         System.out.println("ECRAN CUISINE");
+        readOnFile(file);
       }
       else if(choixEcran == 3){
+        clear();
         System.out.println("ECRAN BAR");
-        Eb(scanner);
+        writeOnFile(file, "Hello");
+        //Eb(scanner);
       }
       else if(choixEcran == 4){
         System.out.println("ECRAN MONITORING");
@@ -43,7 +56,34 @@ public class App{
       }
     }
   }
-
+  public static void readOnFile(File file){
+    //File file = new File("/home/darrkhan/Documents/Java/src/stock.txt");
+    if(file.exists()){
+      try{
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        String st;
+        while((st = br.readLine()) != null){
+          System.out.println(st);
+        }
+        br.close();
+      }
+      catch(IOException e){
+        System.err.format("IOException: %s%n", e);
+      }
+    }
+  }
+  public static void writeOnFile(File file, String sw){
+    if(file.exists() && sw != null){
+      try{
+        BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+        bw.write(sw);
+        bw.close();
+      }
+      catch(IOException e){
+        System.err.format("IOException: %s%n", e);
+      }
+    }
+  }
   public static void Eb(Scanner scanner){   //Function Ecran Bar
     clear();
     System.out.println("1-Stocks");
