@@ -6,6 +6,7 @@ public class App{
   public static List<cmd>listCmd = new ArrayList<cmd>();
   public static List<employee>listEmployee = new ArrayList<employee>();
   public static cmd actualCmd = null;
+  public static File homedir = new File(System.getProperty("user.home"));
 
   public static void clear(){   //Function use for clearing console output
     System.out.print("\033[H\033[2J");
@@ -15,7 +16,7 @@ public class App{
   public static void main(String[] args) throws Exception{
     Scanner scanner = new Scanner(System.in);
     boolean run = true;
-    File homedir = new File(System.getProperty("user.home"));
+
     File file = new File(homedir, "/Documents/Java/src/stock.txt");
     while(run){ //app loop
       //clear();
@@ -42,7 +43,8 @@ public class App{
       else if(choixEcran == 2){
         clear();
         System.out.println("ECRAN CUISINE");
-        readOnFile(file);
+        //readOnFile(file);
+        refreshEmployee();
       }
       else if(choixEcran == 3){
         clear();
@@ -52,26 +54,50 @@ public class App{
       }
       else if(choixEcran == 4){
         System.out.println("ECRAN MONITORING");
-        cmdStatus(scanner, 0);
+        //cmdStatus(scanner, 0);
+        for (employee t: listEmployee){
+          System.out.println(t.getName());
+        }
       }
     }
   }
-  public static void readOnFile(File file){
-    //File file = new File("/home/darrkhan/Documents/Java/src/stock.txt");
+  public static void refreshEmployee(){
+    File file = new File(homedir, "/Documents/Java/src/employee.txt");
+    List<String>listToSort = readOnFile(file);
+    for (String t: listToSort){
+      System.out.println(t);
+      String[] employee = t.split(";");
+      String[] dw = employee[1].split("[a-z]", -1);
+      String[] hw = employee[2].split("[a-z]", -1);
+      System.out.println(employee[1] + " : " + dw[0] + hw[0]);
+      employee emp = new employee(employee[0], hw[0], dw[0]);
+      listEmployee.add(emp);
+
+    }
+  }
+
+  public static List<String> readOnFile(File file){
+    List<String>listSt = new ArrayList<String>();
     if(file.exists()){
       try{
         BufferedReader br = new BufferedReader(new FileReader(file));
         String st;
         while((st = br.readLine()) != null){
-          System.out.println(st);
+          listSt.add(st);
+          //System.out.println(st);
         }
         br.close();
       }
       catch(IOException e){
         System.err.format("IOException: %s%n", e);
       }
+      return listSt;
+    }
+    else{
+      return null;
     }
   }
+
   public static void writeOnFile(File file, String sw){
     if(file.exists() && sw != null){
       try{

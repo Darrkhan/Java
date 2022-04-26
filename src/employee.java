@@ -3,10 +3,10 @@ import java.util.*;
 public class employee{
   public String name;
   public int tableAffected;
-  private int hoursworked;
-  private int daysworked;
+  private String hoursworked;
+  private String daysworked;
 
-  public employee(String name, int hw, int dw){
+  public employee(String name, String hw, String dw){
     this.name = name;
     this.hoursworked = hw;
     this.daysworked = dw;
@@ -14,5 +14,9 @@ public class employee{
 
   public void affectTable(int nt){
     this.tableAffected = nt;
+  }
+
+  public String getName(){
+    return this.name;
   }
 }
