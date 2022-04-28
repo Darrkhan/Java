@@ -1,2 +1,4 @@
-Marc Dupont; 2h; 3j
-Robin Devaux; 1h; 5j
+Marc Dupont; 2j; 3h; 0
+Robin Devaux; 1j; 5h; 0
+Rose Wilabo; 0j; 17h; 0
+Katrina Schadowsky; 3j; 9h; 0

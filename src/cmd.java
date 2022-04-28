@@ -30,5 +30,8 @@ public class cmd{
   public List<Boisson> getListBoisson(){
     return this.listBoisson;
   }
+  public void cmdDone(){
+    this.status = 1;
+  }
 
 }

@@ -1,79 +1,19 @@
 import java.util.*;
 import java.io.*;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 
 
 public class App{
   public static List<cmd>listCmd = new ArrayList<cmd>();
-  public static List<employee>listEmployee = new ArrayList<employee>();
+  public static List<Employee>listEmployee = new ArrayList<Employee>();
   public static cmd actualCmd = null;
   public static File homedir = new File(System.getProperty("user.home"));
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public static void clear(){   //Function use for clearing console output
     System.out.print("\033[H\033[2J");
     System.out.flush();
-  }
-
-  public static void main(String[] args) throws Exception{
-    Scanner scanner = new Scanner(System.in);
-    boolean run = true;
-
-    File file = new File(homedir, "/Documents/Java/src/stock.txt");
-    while(run){ //app loop
-      //clear();
-      if(file.exists()){
-        System.out.println("Exists");
-      }
-      else{
-        System.out.println("Does not Exists");
-      }
-      System.out.println("Quel écran souhaitez vous afficher?");
-      System.out.println("1- Ecran prise de commande");
-      System.out.println("2- Ecran cuisine");
-      System.out.println("3- Ecran bar");
-      System.out.println("4- Ecran monitoring");
-
-
-      int choixEcran = scanner.nextInt();
-      System.out.println("Vous avez choisi l'écran: " + choixEcran);
-
-      if(choixEcran == 1){
-        System.out.println("ECRAN PRISE DE COMMANDE");
-        initEPC(scanner);
-      }
-      else if(choixEcran == 2){
-        clear();
-        System.out.println("ECRAN CUISINE");
-        //readOnFile(file);
-        refreshEmployee();
-      }
-      else if(choixEcran == 3){
-        clear();
-        System.out.println("ECRAN BAR");
-        writeOnFile(file, "Hello");
-        //Eb(scanner);
-      }
-      else if(choixEcran == 4){
-        System.out.println("ECRAN MONITORING");
-        //cmdStatus(scanner, 0);
-        for (employee t: listEmployee){
-          System.out.println(t.getName());
-        }
-      }
-    }
-  }
-  public static void refreshEmployee(){
-    File file = new File(homedir, "/Documents/Java/src/employee.txt");
-    List<String>listToSort = readOnFile(file);
-    for (String t: listToSort){
-      System.out.println(t);
-      String[] employee = t.split(";");
-      String[] dw = employee[1].split("[a-z]", -1);
-      String[] hw = employee[2].split("[a-z]", -1);
-      System.out.println(employee[1] + " : " + dw[0] + hw[0]);
-      employee emp = new employee(employee[0], hw[0], dw[0]);
-      listEmployee.add(emp);
-
-    }
   }
 
   public static List<String> readOnFile(File file){
@@ -98,11 +38,16 @@ public class App{
     }
   }
 
-  public static void writeOnFile(File file, String sw){
+  public static void writeOnFile(File file, List<String>sw){
     if(file.exists() && sw != null){
       try{
         BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-        bw.write(sw);
+        int i = 0;
+        for(String s: sw){
+          bw.write(s);
+          bw.newLine();
+          i++;
+        }
         bw.close();
       }
       catch(IOException e){
@@ -110,21 +55,205 @@ public class App{
       }
     }
   }
-  public static void Eb(Scanner scanner){   //Function Ecran Bar
-    clear();
-    System.out.println("1-Stocks");
-    System.out.println("2-Commandes");
-    int choixbar = scanner.nextInt();
-    if(choixbar == 1){
-      stockDisplay();
-    }
-    else{
-      cmdStatus(scanner, 2);
-    }
-    System.out.println("Voici la prochaine commande : ");
+
+  public static String getDate(){
+    LocalDateTime date = LocalDateTime.now();
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H_m_s__dd_MM_yyyy");
+    String formattedString = date.format(formatter);
+    return formattedString;
   }
 
-  public static void initEPC(Scanner scanner){    //Function init Ecran Prise Commande
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  public static void main(String[] args) throws Exception{
+    Scanner scanner = new Scanner(System.in);
+    boolean run = true;
+
+    File file = new File(homedir, "/Documents/Java/src/stock.txt");
+
+    while(run){ //app loop
+      //clear();
+      refreshEmployee();
+      Employee theChoosenOne = null;
+      for(Employee e: listEmployee){
+          if(e.getWork() == 0 && e.getTable() == 0){
+            theChoosenOne = e;
+          }
+      }
+      System.out.println("Quel écran souhaitez vous afficher?");
+      System.out.println("1- Ecran prise de commande");
+      System.out.println("2- Ecran cuisine");
+      System.out.println("3- Ecran bar");
+      System.out.println("4- Ecran monitoring");
+
+
+      int choixEcran = scanner.nextInt();
+      System.out.println("Vous avez choisi l'écran: " + choixEcran);
+
+      if(choixEcran == 1){
+        //System.out.println("ECRAN PRISE DE COMMANDE");
+        clear();
+        System.out.println("1-Encaisser une commande");
+        if(theChoosenOne != null){
+          System.out.println("2-Prendre une commande");
+        }
+        int choix = scanner.nextInt();
+        if(choix == 1){
+          encaissement(scanner);
+        }
+        else if(choix == 2 && theChoosenOne != null){
+          initEPC(scanner, theChoosenOne);
+        }
+        else{
+          System.out.println("ERROR");
+        }
+        initEPC(scanner, theChoosenOne);
+      }
+      else if(choixEcran == 2){
+        clear();
+        System.out.println("ECRAN CUISINE");
+        //readOnFile(file);
+        refreshEmployee();
+      }
+      else if(choixEcran == 3){
+        clear();
+        System.out.println("ECRAN BAR");
+        //writeOnFile(file, "Hello");
+        //Eb(scanner);
+      }
+      else if(choixEcran == 4){
+        System.out.println("ECRAN MONITORING");
+        //cmdStatus(scanner, 0);
+        /*for (employee t: listEmployee){
+          System.out.println(t.getName() + ", " + t.getDaysWorked() + " days, " + t.getHoursWorked() + " hours.");
+        }*/
+      }
+    }
+  }
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Gestion des employés~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  public static void refreshEmployee(){
+    File file = new File(homedir, "/Documents/Java/src/employee.txt");
+    List<String>listToSort = readOnFile(file);
+    for (String t: listToSort){
+      System.out.println(t);
+      String[] employee = t.split(";");
+      String[] days = (employee[1].split("[a-z]", -1));
+      String[] hours = (employee[2].split("[a-z]", -1));
+      hours[0] = hours[0].replace(" ", "");
+      days[0] = days[0].replace(" ", "");
+      employee[3] = employee[3].replace(" ", "");
+      int work = Integer.parseInt(employee[3]);
+      int hw = Integer.parseInt(hours[0]);
+      int dw = Integer.parseInt(days[0]);
+      System.out.println(employee[1] + " : " + dw + hw);
+      Employee emp = new Employee(employee[0], hw, dw, work);
+      listEmployee.add(emp);
+
+    }
+  }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Stocks~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+public static void stockDisplay(){    //Function to display all stocks
+
+}
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Payement + Facture ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  public static void encaissement(Scanner scanner){
+    String name = "nobody";
+    for(cmd l: listCmd){
+      for(Employee e: listEmployee){
+        if(e.getTable() == l.getTable()){
+          name = e.getName();
+          break;
+        }
+      }
+      System.out.println("Table: " + l.getTable() + " : " + name);
+    }
+  }
+
+  public static void Facture(Scanner scanner, int ecran){   //Function to display all cmd
+    String go;
+    String a = "ok";
+    String paid = "payer";
+    cmd cmdToRemove = null;
+    List<Plat>platCmd = new ArrayList<Plat>();
+    List<Boisson>boissonCmd = new ArrayList<Boisson>();
+    List<String>stringToWrite = new ArrayList<String>();
+    do{
+    clear();
+    int prixTotal = 0;
+    System.out.println("Les commandes actuelles :");
+    for (cmd c: listCmd){   //We display all the cmd
+      stringToWrite.add("_____________________________________");
+      stringToWrite.add("~~~~~~~~~~~~~~Table " + c.getTable() + " ~~~~~~~~~~~~~~~");
+      if(ecran == 0 || ecran == 1){ //Requested from MONITORING or CUISINE
+        platCmd = c.getListPlat();
+        int j = 0;
+        stringToWrite.add("----------------Plats---------------");
+        for (Plat p: platCmd){
+          j++;
+          String wr = p.getPlat() + " " + p.getPrix() + " €";
+          stringToWrite.add(wr);
+          prixTotal += p.getPrix();
+        }
+      }
+      if(ecran == 0 || ecran == 2){//Requested from MONITORING or BAR
+        boissonCmd = c.getListBoisson();
+        int i = 0;
+        stringToWrite.add("--------------Boissons--------------");
+        for (Boisson b: boissonCmd){
+          i++;
+          String wr = b.getBoisson() + " " + b.getPrix() + " €";
+          stringToWrite.add(wr);
+          prixTotal += b.getPrix();
+        }
+      }
+      if(ecran == 0){//Requested from MONITORING
+        stringToWrite.add("------------Total : " + prixTotal + " €------------");
+        stringToWrite.add(getDate());
+      }
+      stringToWrite.add("_____________________________________");
+      try{
+        String fileToCreate = "/Documents/Java/src/facture_" + getDate() + ".txt";
+        File facture = new File(homedir, fileToCreate);
+        if(facture.createNewFile()){
+          System.out.println("OK");
+          writeOnFile(facture, stringToWrite);
+        }
+        else{
+          System.out.println("STOP");
+        }
+
+      }
+      catch(IOException e){
+        System.err.format("IOException: %s%n", e);
+        e.printStackTrace();
+      }
+    }
+    scanner = new Scanner(System.in);
+    go = scanner.nextLine();
+    if(paid.equals(go)){//Said cmd is paid
+      clear();
+      System.out.println("Table numéro : ");
+      int nbrPT = scanner.nextInt();
+      for (cmd c: listCmd){
+        if(c.getTable() == nbrPT){
+          cmdToRemove = c;
+          break;
+        }
+      }
+      if(cmdToRemove != null){
+        listCmd.remove(cmdToRemove);
+      }
+    }
+    }
+    while(!a.equals(go));
+  }
+}
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Prise de Commande~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  public static void initEPC(Scanner scanner, Employee employee){    //Function init Ecran Prise Commande
     clear();
     String a = "ok";
     String go;
@@ -133,7 +262,7 @@ public class App{
     int nbrTable = scanner.nextInt();
     boolean stop = true;
     for (cmd t: listCmd){
-      if(t.getTable() == nbrTable){
+      if(t.getTable() == nbrTable || nbrTable == 0){
         stop = false; //security to avoïd to take a cmd multiple times.
       }
     }
@@ -147,6 +276,7 @@ public class App{
     while(!a.equals(go));
     }
     else{
+      employee.affectTable(nbrTable);
       System.out.print("Nombre de clients :");
       int nbrClients = scanner.nextInt();
       Epc(nbrClients, nbrTable, scanner);
@@ -223,65 +353,18 @@ public class App{
     System.out.println("Commande transmise");
   }
 
-  public static void stockDisplay(){    //Function to display all stocks
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Suivi de commande~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+public static void Eb(Scanner scanner){   //Function Ecran Bar
+  clear();
+  System.out.println("1-Stocks");
+  System.out.println("2-Commandes");
+  int choixbar = scanner.nextInt();
+  if(choixbar == 1){
+    stockDisplay();
   }
-  public static void cmdStatus(Scanner scanner, int ecran){   //Function to display all cmd
-    String go;
-    String a = "ok";
-    String paid = "payer";
-    cmd cmdToRemove = null;
-    List<Plat>platCmd = new ArrayList<Plat>();
-    List<Boisson>boissonCmd = new ArrayList<Boisson>();
-    do{
-    clear();
-    int prixTotal = 0;
-    System.out.println("Les commandes actuelles :");
-    for (cmd c: listCmd){   //We display all the cmd
-      System.out.println("_____________________________________");
-      System.out.println("~~~~~~~~~~~~~~Table " + c.getTable() + " ~~~~~~~~~~~~~~~");
-      if(ecran == 0 || ecran == 1){ //Requested from MONITORING or CUISINE
-        platCmd = c.getListPlat();
-        int j = 0;
-        System.out.println("----------------Plats---------------");
-        for (Plat p: platCmd){
-          j++;
-          System.out.println(p.getPlat());
-          prixTotal += p.getPrix();
-        }
-      }
-      if(ecran == 0 || ecran == 2){//Requested from MONITORING or BAR
-        boissonCmd = c.getListBoisson();
-        int i = 0;
-        System.out.println("--------------Boissons--------------");
-        for (Boisson b: boissonCmd){
-          i++;
-          System.out.println(b.getBoisson());
-          prixTotal += b.getPrix();
-        }
-      }
-      if(ecran == 0){//Requested from MONITORING
-        System.out.println("------------Total : " + prixTotal + " €------------");
-      }
-      System.out.println("_____________________________________");
-    }
-    scanner = new Scanner(System.in);
-    go = scanner.nextLine();
-    if(paid.equals(go)){//Said cmd is paid
-      clear();
-      System.out.println("Table numéro : ");
-      int nbrPT = scanner.nextInt();
-      for (cmd c: listCmd){
-        if(c.getTable() == nbrPT){
-          cmdToRemove = c;
-          break;
-        }
-      }
-      if(cmdToRemove != null){
-        listCmd.remove(cmdToRemove);
-      }
-    }
-    }
-    while(!a.equals(go));
+  else{
+    //cmdStatus(scanner, 2);
   }
+  System.out.println("Voici la prochaine commande : ");
 }
