@@ -63,7 +63,7 @@ public class App{
     return formattedString;
   }
 
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~MAIN LOOP~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public static void main(String[] args) throws Exception{
     Scanner scanner = new Scanner(System.in);
     boolean run = true;
@@ -74,15 +74,30 @@ public class App{
       //clear();
       refreshEmployee();
       Employee theChoosenOne = null;
+      int serveurs = 0;
+      int cuisiniers = 0;
+      int barmans = 0;
       for(Employee e: listEmployee){
+          if(e.getWork() == 0){
+            serveurs++;
+          }
+          if(e.getWork() == 1){
+            cuisiniers++;
+          }
+          if(e.getWork() == 2){
+            barmans++;
+          }
           if(e.getWork() == 0 && e.getTable() == 0){
             theChoosenOne = e;
           }
+
       }
       System.out.println("Quel écran souhaitez vous afficher?");
-      System.out.println("1- Ecran prise de commande");
-      System.out.println("2- Ecran cuisine");
-      System.out.println("3- Ecran bar");
+      if(serveurs >= 2 && cuisiniers >= 4 && barman >= 1){
+        System.out.println("1- Ecran prise de commande");
+        System.out.println("2- Ecran cuisine");
+        System.out.println("3- Ecran bar");
+      }
       System.out.println("4- Ecran monitoring");
 
 
@@ -90,7 +105,6 @@ public class App{
       System.out.println("Vous avez choisi l'écran: " + choixEcran);
 
       if(choixEcran == 1){
-        //System.out.println("ECRAN PRISE DE COMMANDE");
         clear();
         System.out.println("1-Encaisser une commande");
         if(theChoosenOne != null){
