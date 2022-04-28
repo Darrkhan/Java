@@ -72,7 +72,7 @@ public class App{
 
     while(run){ //app loop
       //clear();
-      refreshEmployee();
+      refreshEmployeeFromFile();
       Employee theChoosenOne = null;
       int serveurs = 0;
       int cuisiniers = 0;
@@ -93,10 +93,15 @@ public class App{
 
       }
       System.out.println("Quel écran souhaitez vous afficher?");
-      if(serveurs >= 2 && cuisiniers >= 4 && barman >= 1){
+      boolean open = false;
+      if(serveurs >= 2 && cuisiniers >= 4 && barmans >= 1){
+        open = true;
         System.out.println("1- Ecran prise de commande");
         System.out.println("2- Ecran cuisine");
         System.out.println("3- Ecran bar");
+      }
+      else{
+        System.out.println("Restaurant Fermé");
       }
       System.out.println("4- Ecran monitoring");
 
@@ -104,7 +109,7 @@ public class App{
       int choixEcran = scanner.nextInt();
       System.out.println("Vous avez choisi l'écran: " + choixEcran);
 
-      if(choixEcran == 1){
+      if(choixEcran == 1 && open == true){
         clear();
         System.out.println("1-Encaisser une commande");
         if(theChoosenOne != null){
@@ -125,8 +130,6 @@ public class App{
       else if(choixEcran == 2){
         clear();
         System.out.println("ECRAN CUISINE");
-        //readOnFile(file);
-        refreshEmployee();
       }
       else if(choixEcran == 3){
         clear();
@@ -135,36 +138,71 @@ public class App{
         //Eb(scanner);
       }
       else if(choixEcran == 4){
-        System.out.println("ECRAN MONITORING");
-        //cmdStatus(scanner, 0);
-        /*for (employee t: listEmployee){
-          System.out.println(t.getName() + ", " + t.getDaysWorked() + " days, " + t.getHoursWorked() + " hours.");
-        }*/
+        //System.out.println("ECRAN MONITORING");
+        clear();
+        System.out.println("1- Gestion des employés");
+        System.out.println("2- Gestion des Stocks");
+        System.out.println("3- Fermeture");
+
+        int choixMonitoring = scanner.nextInt();
+
+        if(choixMonitoring == 1){
+          clear();
+          gestionnaire();
+        }
+        else if(choixMonitoring == 2){
+          clear();
+        }
+        else if(choixMonitoring == 3){
+          clear();
+        }
       }
     }
   }
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Gestion des employés~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  public static void refreshEmployee(){
+//Decouplage refreshEmployee() avec une nouvelle fonction chargé de reverse le process (Java -> fichier)
+  public static void refreshEmployeeFromFile(){
     File file = new File(homedir, "/Documents/Java/src/employee.txt");
     List<String>listToSort = readOnFile(file);
+    List<String>stringToWrite = new ArrayList<String>();
     for (String t: listToSort){
+      stringToWrite.add(t);
       System.out.println(t);
       String[] employee = t.split(";");
-      String[] days = (employee[1].split("[a-z]", -1));
-      String[] hours = (employee[2].split("[a-z]", -1));
-      hours[0] = hours[0].replace(" ", "");
-      days[0] = days[0].replace(" ", "");
-      employee[3] = employee[3].replace(" ", "");
-      int work = Integer.parseInt(employee[3]);
-      int hw = Integer.parseInt(hours[0]);
-      int dw = Integer.parseInt(days[0]);
-      System.out.println(employee[1] + " : " + dw + hw);
-      Employee emp = new Employee(employee[0], hw, dw, work);
+      String[] evenings = (employee[1].split("[a-z]", -1));
+      evenings[0] = evenings[0].replace(" ", "");
+      employee[2] = employee[2].replace(" ", "");
+      int work = Integer.parseInt(employee[2]);
+      int ew = Integer.parseInt(evenings[0]);
+      //System.out.println("soir : " + ew + " | role: " + work);
+      Employee emp = new Employee(employee[0], ew, work);
       listEmployee.add(emp);
-
     }
+  }
+
+  public static void refreshEmployeeFromList(){
+    File file = new File(homedir, "/Documents/Java/src/employee.txt");
+    List<String>stringToWrite = new ArrayList<String>();
+    for(Employee s: listEmployee){
+      String sw = s.getName() + "; " + s.getEveningWorked() + "; "+ s.getWork();
+      stringToWrite.add(sw);
+    }
+    writeOnFile(file, sw);
+  }
+
+  public static void gestionnaire(){
+    File file = new File(homedir, "/Documents/Java/src/employee.txt");
+    for(Employee s: listEmployee){
+      String sw = s.getName() + "; " + s.getEveningWorked() + "; "+ s.getWork();
+      System.out.println(sw);
+    }
+    System.out.println("Add or Delete Employee ?");
+    System.out.println(" Suivre la notation : Add (or delete)_Prenom Nom; 0s; role  (role = 0 pour serveur, 1 pour cuisinier, 2 pour barman)");
+    Scanner scannerG = new Scanner(System.in);
+    String ne = scannerG.nextLine();
+    System.out.println(ne);
   }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Stocks~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -264,7 +302,6 @@ public static void stockDisplay(){    //Function to display all stocks
     }
     while(!a.equals(go));
   }
-}
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Prise de Commande~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public static void initEPC(Scanner scanner, Employee employee){    //Function init Ecran Prise Commande
@@ -297,6 +334,7 @@ public static void stockDisplay(){    //Function to display all stocks
     }
 
   }
+
   public static void Epc(int nbrClients, int nbrTable, Scanner scanner){    //Main function of EPC
     clear();
     actualCmd = new cmd(nbrClients, nbrTable);    //Creation of a new cmd
@@ -367,18 +405,19 @@ public static void stockDisplay(){    //Function to display all stocks
     System.out.println("Commande transmise");
   }
 
-
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Suivi de commande~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-public static void Eb(Scanner scanner){   //Function Ecran Bar
-  clear();
-  System.out.println("1-Stocks");
-  System.out.println("2-Commandes");
-  int choixbar = scanner.nextInt();
-  if(choixbar == 1){
-    stockDisplay();
+  public static void Eb(Scanner scanner){   //Function Ecran Bar
+    clear();
+    System.out.println("1-Stocks");
+    System.out.println("2-Commandes");
+    int choixbar = scanner.nextInt();
+    if(choixbar == 1){
+      stockDisplay();
+    }
+    else{
+      //cmdStatus(scanner, 2);
+    }
+    System.out.println("Voici la prochaine commande : ");
   }
-  else{
-    //cmdStatus(scanner, 2);
-  }
-  System.out.println("Voici la prochaine commande : ");
+
 }
