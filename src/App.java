@@ -63,12 +63,20 @@ public class App{
     return formattedString;
   }
 
+  public static Employee stringToEmployee(String st){
+    String[] employee = st.split(";");
+    String[] evenings = (employee[1].split("[a-z]", -1));
+    evenings[0] = evenings[0].replace(" ", "");
+    employee[2] = employee[2].replace(" ", "");
+    int work = Integer.parseInt(employee[2]);
+    int ew = Integer.parseInt(evenings[0]);
+    Employee emp = new Employee(employee[0], ew, work);
+    return emp;
+  }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~MAIN LOOP~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public static void main(String[] args) throws Exception{
     Scanner scanner = new Scanner(System.in);
     boolean run = true;
-
-    File file = new File(homedir, "/Documents/Java/src/stock.txt");
 
     while(run){ //app loop
       //clear();
@@ -78,6 +86,7 @@ public class App{
       int cuisiniers = 0;
       int barmans = 0;
       for(Employee e: listEmployee){
+        if(e.getEveningWorked() <= 3){
           if(e.getWork() == 0){
             serveurs++;
           }
@@ -90,7 +99,7 @@ public class App{
           if(e.getWork() == 0 && e.getTable() == 0){
             theChoosenOne = e;
           }
-
+        }
       }
       System.out.println("Quel écran souhaitez vous afficher?");
       boolean open = false;
@@ -125,13 +134,12 @@ public class App{
         else{
           System.out.println("ERROR");
         }
-        initEPC(scanner, theChoosenOne);
       }
-      else if(choixEcran == 2){
+      else if(choixEcran == 2 && theChoosenOne != null){
         clear();
         System.out.println("ECRAN CUISINE");
       }
-      else if(choixEcran == 3){
+      else if(choixEcran == 3 && theChoosenOne != null){
         clear();
         System.out.println("ECRAN BAR");
         //writeOnFile(file, "Hello");
@@ -139,7 +147,8 @@ public class App{
       }
       else if(choixEcran == 4){
         //System.out.println("ECRAN MONITORING");
-        clear();
+        //clear();
+        showEmployeeList();
         System.out.println("1- Gestion des employés");
         System.out.println("2- Gestion des Stocks");
         System.out.println("3- Fermeture");
@@ -162,34 +171,42 @@ public class App{
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Gestion des employés~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//Decouplage refreshEmployee() avec une nouvelle fonction chargé de reverse le process (Java -> fichier)
+
   public static void refreshEmployeeFromFile(){
     File file = new File(homedir, "/Documents/Java/src/employee.txt");
     List<String>listToSort = readOnFile(file);
-    List<String>stringToWrite = new ArrayList<String>();
     for (String t: listToSort){
-      stringToWrite.add(t);
-      System.out.println(t);
-      String[] employee = t.split(";");
-      String[] evenings = (employee[1].split("[a-z]", -1));
-      evenings[0] = evenings[0].replace(" ", "");
-      employee[2] = employee[2].replace(" ", "");
-      int work = Integer.parseInt(employee[2]);
-      int ew = Integer.parseInt(evenings[0]);
-      //System.out.println("soir : " + ew + " | role: " + work);
-      Employee emp = new Employee(employee[0], ew, work);
-      listEmployee.add(emp);
+      //System.out.println(t);
+      boolean exist = false;
+      Employee emp = stringToEmployee(t);
+      for(Employee z: listEmployee){
+        //System.out.println(z.getName() + " ~~~ " + emp.getName());
+        if(z.getName().equals(emp.getName())){
+          exist = true;
+        }
+      }
+      //System.out.println(exist);
+      if(exist != true){
+        listEmployee.add(emp);
+      }
     }
   }
-
+  public static void showEmployeeList(){
+    clear();
+    for(Employee s: listEmployee){
+      String sw = s.getName() + "; " + s.getEveningWorked() + "; "+ s.getWork();
+      System.out.println(sw);
+    }
+  }
   public static void refreshEmployeeFromList(){
+
     File file = new File(homedir, "/Documents/Java/src/employee.txt");
     List<String>stringToWrite = new ArrayList<String>();
     for(Employee s: listEmployee){
       String sw = s.getName() + "; " + s.getEveningWorked() + "; "+ s.getWork();
       stringToWrite.add(sw);
     }
-    writeOnFile(file, sw);
+    writeOnFile(file, stringToWrite);
   }
 
   public static void gestionnaire(){
@@ -202,7 +219,10 @@ public class App{
     System.out.println(" Suivre la notation : Add (or delete)_Prenom Nom; 0s; role  (role = 0 pour serveur, 1 pour cuisinier, 2 pour barman)");
     Scanner scannerG = new Scanner(System.in);
     String ne = scannerG.nextLine();
-    System.out.println(ne);
+    String [] filter = ne.split("_");
+    Employee emp = stringToEmployee(filter[1]);
+    listEmployee.add(emp);
+    //System.out.println(ne);
   }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Stocks~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -210,7 +230,7 @@ public static void stockDisplay(){    //Function to display all stocks
 
 }
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Payement + Facture ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Payement + Facture + Suppr cmd~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public static void encaissement(Scanner scanner){
     String name = "nobody";
     for(cmd l: listCmd){
@@ -222,50 +242,48 @@ public static void stockDisplay(){    //Function to display all stocks
       }
       System.out.println("Table: " + l.getTable() + " : " + name);
     }
+    System.out.println("Table à facturer :");
+    int tablePaid = scanner.nextInt();
+    Facture(tablePaid);
   }
 
-  public static void Facture(Scanner scanner, int ecran){   //Function to display all cmd
-    String go;
-    String a = "ok";
-    String paid = "payer";
-    cmd cmdToRemove = null;
+  public static void Facture(int table){   //Function to display all cmd
     List<Plat>platCmd = new ArrayList<Plat>();
     List<Boisson>boissonCmd = new ArrayList<Boisson>();
     List<String>stringToWrite = new ArrayList<String>();
-    do{
     clear();
     int prixTotal = 0;
-    System.out.println("Les commandes actuelles :");
-    for (cmd c: listCmd){   //We display all the cmd
-      stringToWrite.add("_____________________________________");
-      stringToWrite.add("~~~~~~~~~~~~~~Table " + c.getTable() + " ~~~~~~~~~~~~~~~");
-      if(ecran == 0 || ecran == 1){ //Requested from MONITORING or CUISINE
-        platCmd = c.getListPlat();
-        int j = 0;
-        stringToWrite.add("----------------Plats---------------");
-        for (Plat p: platCmd){
-          j++;
-          String wr = p.getPlat() + " " + p.getPrix() + " €";
-          stringToWrite.add(wr);
-          prixTotal += p.getPrix();
+    for (cmd c: listCmd){
+      if(c.getTable() == table){
+        c.setStatus(2);
+        stringToWrite.add("_____________________________________");
+        stringToWrite.add("~~~~~~~~~~~~~~Table " + c.getTable() + " ~~~~~~~~~~~~~~~");
+        //Requested from MONITORING or CUISINE
+          platCmd = c.getListPlat();
+          int j = 0;
+          stringToWrite.add("----------------Plats---------------");
+          for (Plat p: platCmd){
+            j++;
+            String wr = p.getPlat() + " " + p.getPrix() + " €";
+            stringToWrite.add(wr);
+            prixTotal += p.getPrix();
+          }
+          //Requested from MONITORING or BAR
+          boissonCmd = c.getListBoisson();
+          int i = 0;
+          stringToWrite.add("--------------Boissons--------------");
+          for (Boisson b: boissonCmd){
+            i++;
+            String wr = b.getBoisson() + " " + b.getPrix() + " €";
+            stringToWrite.add(wr);
+            prixTotal += b.getPrix();
+          }
+          //Requested from MONITORING
+          stringToWrite.add("------------Total : " + prixTotal + " €------------");
+          stringToWrite.add(getDate());
+          stringToWrite.add("_____________________________________");
         }
       }
-      if(ecran == 0 || ecran == 2){//Requested from MONITORING or BAR
-        boissonCmd = c.getListBoisson();
-        int i = 0;
-        stringToWrite.add("--------------Boissons--------------");
-        for (Boisson b: boissonCmd){
-          i++;
-          String wr = b.getBoisson() + " " + b.getPrix() + " €";
-          stringToWrite.add(wr);
-          prixTotal += b.getPrix();
-        }
-      }
-      if(ecran == 0){//Requested from MONITORING
-        stringToWrite.add("------------Total : " + prixTotal + " €------------");
-        stringToWrite.add(getDate());
-      }
-      stringToWrite.add("_____________________________________");
       try{
         String fileToCreate = "/Documents/Java/src/facture_" + getDate() + ".txt";
         File facture = new File(homedir, fileToCreate);
@@ -282,25 +300,33 @@ public static void stockDisplay(){    //Function to display all stocks
         System.err.format("IOException: %s%n", e);
         e.printStackTrace();
       }
-    }
-    scanner = new Scanner(System.in);
-    go = scanner.nextLine();
-    if(paid.equals(go)){//Said cmd is paid
-      clear();
-      System.out.println("Table numéro : ");
-      int nbrPT = scanner.nextInt();
-      for (cmd c: listCmd){
-        if(c.getTable() == nbrPT){
-          cmdToRemove = c;
-          break;
+      SearchCmdToRemove();
+  }
+
+  public static void SearchCmdToRemove(){
+    cmd cmdToRemove = null;
+    int i = 0;
+    for (cmd c: listCmd){
+      i++;
+      if(c.getStatus() == 2){
+        cmdToRemove = c;
+        for(Employee e: listEmployee){
+          if(c.getTable() == e.getTable()){
+            e.affectTable(0);
+          }
         }
       }
-      if(cmdToRemove != null){
-        listCmd.remove(cmdToRemove);
-      }
     }
+    removeCmd(cmdToRemove);
+
+  }
+
+  public static void removeCmd(cmd cmdToRemove){
+    int done = 0;
+    if(cmdToRemove != null){
+      listCmd.remove(cmdToRemove);
+      done = 1;
     }
-    while(!a.equals(go));
   }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Prise de Commande~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -368,7 +394,6 @@ public static void stockDisplay(){    //Function to display all stocks
       int choix = scanner.nextInt();
 
       clear();
-      if(choix != 0){
       //All the option for Plats
       if(choix == 1){//Salade
         System.out.println("Options disponibles pour la salade :");
@@ -395,9 +420,9 @@ public static void stockDisplay(){    //Function to display all stocks
       }
 
       int choixGout = scanner.nextInt();
-      actualCmd.addPlat(choix, choixGout);
+      if(choix != 0){
+        actualCmd.addPlat(choix, choixGout);
       }
-
     }
       clientsDone++;
       //System.out.println("Client restant : " + (nbrClients - clientsDone));

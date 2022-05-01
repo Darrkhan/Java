@@ -4,7 +4,7 @@ public class cmd{
   private int clients = 0;
   private List<Plat>listPlat = new ArrayList<Plat>();
   private List<Boisson>listBoisson = new ArrayList<Boisson>();
-  private int status = 0;
+  private int status = 0; // 0 = commande prise; 1 = commande prête; 2 = commande payée;
   private int table;
 
   public cmd(int clients, int table){
@@ -21,6 +21,13 @@ public class cmd{
     listBoisson.add(boissonToAdd);
     System.out.println("Type : " + type);
   }
+  public int getStatus(){
+    return this.status;
+  }
+  public void setStatus(int status){
+    this.status = status;
+  }
+
   public int getTable(){
     return this.table;
   }
@@ -33,5 +40,4 @@ public class cmd{
   public void cmdDone(){
     this.status = 1;
   }
-
 }
