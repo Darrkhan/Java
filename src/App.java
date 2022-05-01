@@ -198,6 +198,22 @@ public class App{
       System.out.println(sw);
     }
   }
+
+  public static void removeEmployee(String name){
+    clear();
+    Employee employeeToRemove = null;
+    for (Employee e: listEmployee){
+      if((e.getName()).equals(name)){
+        employeeToRemove = e;
+      }
+    }
+    if(employeeToRemove != null){
+      listEmployee.remove(employeeToRemove);
+    }
+    refreshEmployeeFromList();
+  }
+
+
   public static void refreshEmployeeFromList(){
 
     File file = new File(homedir, "/Documents/Java/src/employee.txt");
@@ -216,13 +232,21 @@ public class App{
       System.out.println(sw);
     }
     System.out.println("Add or Delete Employee ?");
-    System.out.println(" Suivre la notation : Add (or delete)_Prenom Nom; 0s; role  (role = 0 pour serveur, 1 pour cuisinier, 2 pour barman)");
+    System.out.println(" Suivre la notation : Add (or del)_Prenom Nom; 0s; role  (role = 0 pour serveur, 1 pour cuisinier, 2 pour barman)");
     Scanner scannerG = new Scanner(System.in);
     String ne = scannerG.nextLine();
     String [] filter = ne.split("_");
-    Employee emp = stringToEmployee(filter[1]);
-    listEmployee.add(emp);
-    //System.out.println(ne);
+    if(filter[0].equals("Add")){
+      Employee emp = stringToEmployee(filter[1]);
+      listEmployee.add(emp);
+    }
+    else if(filter[0].equals("Del")){
+      removeEmployee(filter[1]);
+      refreshEmployeeFromList();
+    }
+    else{
+     System.out.println("ERROR");
+    }
   }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Stocks~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -309,7 +333,7 @@ public static void stockDisplay(){    //Function to display all stocks
     for (cmd c: listCmd){
       i++;
       if(c.getStatus() == 2){
-        cmdToRemove = c
+        cmdToRemove = c;
         for(Employee e: listEmployee){
           if(c.getTable() == e.getTable()){
             e.affectTable(0);
