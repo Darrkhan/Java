@@ -309,7 +309,7 @@ public static void stockDisplay(){    //Function to display all stocks
     for (cmd c: listCmd){
       i++;
       if(c.getStatus() == 2){
-        cmdToRemove = c;
+        cmdToRemove = c
         for(Employee e: listEmployee){
           if(c.getTable() == e.getTable()){
             e.affectTable(0);
@@ -394,6 +394,7 @@ public static void stockDisplay(){    //Function to display all stocks
       int choix = scanner.nextInt();
 
       clear();
+      if(choix != 0){
       //All the option for Plats
       if(choix == 1){//Salade
         System.out.println("Options disponibles pour la salade :");
@@ -420,9 +421,9 @@ public static void stockDisplay(){    //Function to display all stocks
       }
 
       int choixGout = scanner.nextInt();
-      if(choix != 0){
-        actualCmd.addPlat(choix, choixGout);
+      actualCmd.addPlat(choix, choixGout);
       }
+
     }
       clientsDone++;
       //System.out.println("Client restant : " + (nbrClients - clientsDone));
