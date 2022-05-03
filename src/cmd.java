@@ -7,6 +7,7 @@ public class cmd{
   private int statusPlat = 0; // 0 = commande prise; 1 = commande prête; 2 = commande payée;
   private int statusBoisson = 0;
   private int status = 0;
+  private int special = 0;
   private int table;
 
   public cmd(int clients, int table){
@@ -17,6 +18,12 @@ public class cmd{
     Plat platToAdd = new Plat(type, option);
     listPlat.add(platToAdd);
     //System.out.println("Type : " + type);
+  }
+  public void setSpecial(int n){
+    this.special = n;
+  }
+  public int getSpecial(){
+    return this.special;
   }
   public void addBoisson(int type){
     Boisson boissonToAdd = new Boisson(type);

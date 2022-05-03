@@ -23,6 +23,9 @@ public class App{
   private static int fromages = 0;
   private static int saucisses = 0;
   private static int pates = 0;
+  private static int crepes = 0;
+  private static int sauces = 0;
+  private static int poulets = 0;
   private static int limonades = 0;
   private static int cidres = 0;
   private static int bieresa = 0;
@@ -339,6 +342,18 @@ public class App{
     stockage.add(pates);
     stringToWrite.add(sw);
     i++;
+    sw = "Unitées de Crepe: " + (starter.get(i)-crepes);
+    stockage.add(crepes);
+    stringToWrite.add(sw);
+    i++;
+    sw = "Unitées de Sauce: " + (starter.get(i)-sauces);
+    stockage.add(sauces);
+    stringToWrite.add(sw);
+    i++;
+    sw = "Unitées de Poulet: " + (starter.get(i)-poulets);
+    stockage.add(poulets);
+    stringToWrite.add(sw);
+    i++;
     sw = "Unitées de Limonade: " + (starter.get(i)-limonades);
     stockage.add(limonades);
     stringToWrite.add(sw);
@@ -369,6 +384,9 @@ public class App{
     System.out.println("Unitées de Fromage: " + fromages);
     System.out.println("Unitées de Saucisse: " + saucisses);
     System.out.println("Unitées de Pate: " + pates);
+    System.out.println("Unitées de Crepe: " + crepes);
+    System.out.println("Unitées de Sauce: " + sauces);
+    System.out.println("Unitées de Poulet: " + poulets);
 
 
     System.out.println("Unitées de Limonade: " + limonades);
@@ -447,6 +465,27 @@ public class App{
   pates = scanner.nextInt();
   starter.add(pates);
   sw = "Unitées de Pate: " + pates;
+  stringToWrite.add(sw);
+  clear();
+
+  System.out.println("Unitées de Crepe: ");
+  crepes = scanner.nextInt();
+  starter.add(crepes);
+  sw = "Unitées de Crepe: " + crepes;
+  stringToWrite.add(sw);
+  clear();
+
+  System.out.println("Unitées de Sauce: ");
+  sauces = scanner.nextInt();
+  starter.add(sauces);
+  sw = "Unitées de Sauce: " + sauces;
+  stringToWrite.add(sw);
+  clear();
+
+  System.out.println("Unitées de Poulet: ");
+  poulets = scanner.nextInt();
+  starter.add(poulets);
+  sw = "Unitées de Poulet: " + poulets;
   stringToWrite.add(sw);
   clear();
 
@@ -632,6 +671,9 @@ public class App{
             prixTotal += b.getPrix();
           }
           //Requested from MONITORING
+          if(c.getSpecial() == 1){
+            prixTotal = 100;
+          }
           stringToWrite.add("------------Total : " + prixTotal + " €------------");
           sellStats += prixTotal;
           stringToWrite.add(getDate());
@@ -711,34 +753,40 @@ public class App{
       employee.affectTable(nbrTable);
       System.out.print("Nombre de clients :");
       int nbrClients = scanner.nextInt();
-      Epc(nbrClients, nbrTable, scanner);
+      System.out.println("Menu des 100 ans(0/1)");
+      int special = scanner.nextInt();
+      Epc(nbrClients, nbrTable, scanner, special);
     }
 
   }
 
-  public static void Epc(int nbrClients, int nbrTable, Scanner scanner){    //Main function of EPC
+  public static void Epc(int nbrClients, int nbrTable, Scanner scanner, int special){    //Main function of EPC
     clear();
     actualCmd = new cmd(nbrClients, nbrTable);    //Creation of a new cmd
     listCmd.add(actualCmd);   //we add it to our listCmd
     cmdStats++;
     int clientsDone = 0;
     int i = 0;
-
+    int x = nbrClients;
+    if(special == 1){
+      x = 7;
+      actualCmd.setSpecial(1);
+    }
     while(clientsDone < (2 *nbrClients)){//while for boissons and plats
       clear();
       //We start by boisson
       if(clientsDone < nbrClients){
         System.out.println("0- pas de boisson");
-        if(verifyStocks(9, 1) == 1){
+        if(verifyStocks(12, x*1) == 1){
           System.out.println("1- Limonade");
         }
-        if(verifyStocks(10, 1) == 1){
+        if(verifyStocks(13, x*1) == 1){
           System.out.println("2- Cidre doux");
         }
-        if(verifyStocks(11, 1) == 1){
+        if(verifyStocks(14, x*1) == 1){
           System.out.println("3- Bière sans alcool");
         }
-        if(verifyStocks(12, 1) == 1){
+        if(verifyStocks(15, x*1) == 1){
           System.out.println("4- Jus de fruit");
         }
         System.out.println("5- Verre d'eau");
@@ -751,21 +799,25 @@ public class App{
       }
       else{
       //Once all boissons done we take Plats
+
       System.out.println("0- pas de plat");
-      if(verifyStocks(0, 1) == 1){
+      if(verifyStocks(0, x*1) == 1){
         System.out.println("1- Salade");
       }
 
-      if(verifyStocks(1, 3) == 1 || verifyStocks(2, 3) == 1 || verifyStocks(3, 3) == 1){
+      if(verifyStocks(1, x*3) == 1 || verifyStocks(2, x*3) == 1 || verifyStocks(3, x*3) == 1){
         System.out.println("2- Potage");
       }
 
-      if(verifyStocks(4, 1) == 1 && verifyStocks(5, 1) == 1){
+      if(verifyStocks(4, x*1) == 1 && verifyStocks(5, x*1) == 1){
         System.out.println("3- Burgers");
       }
 
-      if(verifyStocks(8, 1) == 1 && verifyStocks(6, 1) == 1 && verifyStocks(1, 1) == 1){
+      if(verifyStocks(8, x*1) == 1 && verifyStocks(6, x*1) == 1 && verifyStocks(1, x*1) == 1){
         System.out.println("4- Pizzas");
+      }
+      if(verifyStocks(9, x*1) == 1 && verifyStocks(10, x*1) == 1 && (verifyStocks(11, x*1) == 1 || verifyStocks(5, x*1) == 1)){
+        System.out.println("4- Fajitas");
       }
       int choix = scanner.nextInt();
 
@@ -775,40 +827,49 @@ public class App{
       if(choix == 1){//Salade
         System.out.println("Options disponibles pour la salade :");
         System.out.println("1- classique");
-        if(verifyStocks(1, 1) == 1){
+        if(verifyStocks(1, x*1) == 1){
           System.out.println("2- option tomate");
         }
       }
       else if(choix == 2){ //Potage
         System.out.println("Options disponibles pour le potage :");
-        if(verifyStocks(2, 3) == 1){
+        if(verifyStocks(2, x*3) == 1){
           System.out.println("1- oignon");
         }
-        if(verifyStocks(1, 3) == 1){
+        if(verifyStocks(1, x*3) == 1){
           System.out.println("2- tomate");
         }
-        if(verifyStocks(3, 3) == 1){
+        if(verifyStocks(3, x*3) == 1){
           System.out.println("3- champignon");
         }
       }
       else if(choix == 3){//Burger
         System.out.println("Options disponibles pour le burger :");
         System.out.println("1- classique");
-        if(verifyStocks(0, 1) == 1){
+        if(verifyStocks(0, x*1) == 1){
           System.out.println("2- option Salade");
         }
-        if(verifyStocks(1, 1) == 1 && verifyStocks(0, 1) == 1){
+        if(verifyStocks(1, x*1) == 1 && verifyStocks(0, x*1) == 1){
           System.out.println("3- option salade tomate");
         }
       }
       else if(choix == 4){//Pizza
         System.out.println("Options disponibles pour la pizza :");
         System.out.println("1- classique");
-        if(verifyStocks(3, 1) == 1){
+        if(verifyStocks(3, x*1) == 1){
           System.out.println("2- option champignon");
         }
-        if(verifyStocks(7, 1) == 1){
+        if(verifyStocks(7, x*1) == 1){
           System.out.println("3- option saucisse");
+        }
+      }
+      else if(choix == 5){//Fajitas
+        System.out.println("Options disponibles pour la fajitas :");
+        if(verifyStocks(11, x*1) == 1){
+          System.out.println("1- poulet");
+        }
+        if(verifyStocks(5, x*1) == 1){
+          System.out.println("2- steak");
         }
       }
 
@@ -830,9 +891,6 @@ public class App{
     clear();
     String status;
     for(cmd c: listCmd){
-      if(c.getStatusPlat() == 1 && c.getStatusBoisson() == 1){
-        c.setStatus(1);
-      }
       else if(c.getStatus() == 0){
         do{
           System.out.println("Table " + c.getTable());
@@ -857,6 +915,9 @@ public class App{
         }
         else if(ecran == 1){
           c.setStatusBoisson(1);
+        }
+        if(c.getStatusPlat() == 1 && c.getStatusBoisson() == 1){
+          c.setStatus(1);
         }
       }
 

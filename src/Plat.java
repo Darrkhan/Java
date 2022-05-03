@@ -18,6 +18,9 @@ public class Plat{
     else if (type == 4){
       this.prix = 12;
     }
+    else if (type == 5){
+      this.prix = 11;
+    }
   }
   public int getPrix(){
     return this.prix;
@@ -80,6 +83,16 @@ public class Plat{
       }
       else if(this.option == 3){
         plat = plat + "saucisse";
+      }
+      return plat;
+    }
+    else if(this.type == 5){
+      plat = "Fajitas ";
+      if(this.option == 1){
+        plat = plat + "poulet";
+      }
+      else if(this.option == 2){
+        plat = plat + "steak";
       }
       return plat;
     }
