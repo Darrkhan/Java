@@ -48,5 +48,8 @@ public class Boisson{
   public int getPrix(){
     return this.prix;
   }
+  public int getType(){
+    return this.type;
+  }
 
 }

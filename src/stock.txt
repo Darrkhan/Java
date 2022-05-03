@@ -1,1 +1,13 @@
-Hello
+Unitées de Salade: 1
+Unitées de Tomate: 3
+Unitées de Oignon: 0
+Unitées de Champignon: 0
+Unitées de Pain: 0
+Unitées de Steak: 0
+Unitées de Fromage: 0
+Unitées de Saucisse: 0
+Unitées de Pate: 0
+Unitées de Limonade: 1
+Unitées de Cidre doux: 1
+Unitées de Bieresa: 0
+Unitées de Jus de fruit: 0

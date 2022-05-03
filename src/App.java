@@ -5,10 +5,28 @@ import java.time.format.DateTimeFormatter;
 
 
 public class App{
-  public static List<cmd>listCmd = new ArrayList<cmd>();
-  public static List<Employee>listEmployee = new ArrayList<Employee>();
-  public static cmd actualCmd = null;
-  public static File homedir = new File(System.getProperty("user.home"));
+  private static List<cmd>listCmd = new ArrayList<cmd>();
+  private static List<Employee>listEmployee = new ArrayList<Employee>();
+  private static cmd actualCmd = null;
+  private static File homedir = new File(System.getProperty("user.home"));
+  private static List<Integer>starter = new ArrayList<Integer>();
+  private static List<Integer>stockage = new ArrayList<Integer>();
+  private static int cmdStats = 0;
+  private static int sellStats = 0;
+
+  private static int salades = 0;
+  private static int tomates = 0;
+  private static int oignons = 0;
+  private static int champignons = 0;
+  private static int pains = 0;
+  private static int steaks = 0;
+  private static int fromages = 0;
+  private static int saucisses = 0;
+  private static int pates = 0;
+  private static int limonades = 0;
+  private static int cidres = 0;
+  private static int bieresa = 0;
+  private static int jdf = 0;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public static void clear(){   //Function use for clearing console output
@@ -77,9 +95,9 @@ public class App{
   public static void main(String[] args) throws Exception{
     Scanner scanner = new Scanner(System.in);
     boolean run = true;
-
+    boolean stocks = false;
     while(run){ //app loop
-      //clear();
+      clear();
       refreshEmployeeFromFile();
       Employee theChoosenOne = null;
       int serveurs = 0;
@@ -103,7 +121,7 @@ public class App{
       }
       System.out.println("Quel écran souhaitez vous afficher?");
       boolean open = false;
-      if(serveurs >= 2 && cuisiniers >= 4 && barmans >= 1){
+      if(serveurs >= 2 && cuisiniers >= 4 && barmans >= 1 && stocks == true){
         open = true;
         System.out.println("1- Ecran prise de commande");
         System.out.println("2- Ecran cuisine");
@@ -114,9 +132,9 @@ public class App{
       }
       System.out.println("4- Ecran monitoring");
 
-
       int choixEcran = scanner.nextInt();
       System.out.println("Vous avez choisi l'écran: " + choixEcran);
+
 
       if(choixEcran == 1 && open == true){
         clear();
@@ -135,15 +153,15 @@ public class App{
           System.out.println("ERROR");
         }
       }
-      else if(choixEcran == 2 && theChoosenOne != null){
+      else if(choixEcran == 2 && open == true){
         clear();
         System.out.println("ECRAN CUISINE");
+        Ec(scanner);
       }
-      else if(choixEcran == 3 && theChoosenOne != null){
+      else if(choixEcran == 3 && open == true){
         clear();
         System.out.println("ECRAN BAR");
-        //writeOnFile(file, "Hello");
-        //Eb(scanner);
+        Eb(scanner);
       }
       else if(choixEcran == 4){
         //System.out.println("ECRAN MONITORING");
@@ -151,7 +169,8 @@ public class App{
         showEmployeeList();
         System.out.println("1- Gestion des employés");
         System.out.println("2- Gestion des Stocks");
-        System.out.println("3- Fermeture");
+        System.out.println("3- Statistiques du jour");
+        System.out.println("4- Fermeture");
 
         int choixMonitoring = scanner.nextInt();
 
@@ -161,9 +180,36 @@ public class App{
         }
         else if(choixMonitoring == 2){
           clear();
+          System.out.println("1-Inventaire des stocks");
+          System.out.println("2-Etat des stocks");
+          int choix = scanner.nextInt();
+          if(choix == 1){
+            stocks = inventory(scanner);
+          }
+          else if(choix == 2){
+            showStock();
+          }
         }
         else if(choixMonitoring == 3){
           clear();
+          String a;
+          do{
+          System.out.println("Nombre total de commande: " + cmdStats);
+          System.out.println("Recettes totales: " + sellStats);
+          System.out.println("(ok)");
+          Scanner scannerZ = new Scanner(System.in);
+          a = scannerZ.nextLine();
+          }
+          while(!(a.equals("ok")));
+        }
+        else if(choixMonitoring == 4){
+          clear();
+          for(Employee e: listEmployee){
+            int i = e.getEveningWorked();
+            i++;
+            e.setEveningWorked(i);
+          }
+          refreshEmployeeFromList();
         }
       }
     }
@@ -191,6 +237,7 @@ public class App{
       }
     }
   }
+
   public static void showEmployeeList(){
     clear();
     for(Employee s: listEmployee){
@@ -215,7 +262,6 @@ public class App{
 
 
   public static void refreshEmployeeFromList(){
-
     File file = new File(homedir, "/Documents/Java/src/employee.txt");
     List<String>stringToWrite = new ArrayList<String>();
     for(Employee s: listEmployee){
@@ -250,25 +296,302 @@ public class App{
   }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Stocks~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-public static void stockDisplay(){    //Function to display all stocks
+  public static void refreshStocks(){
+    String sw;
+    stockage = new ArrayList<Integer>();
+    File file = new File(homedir, "/Documents/Java/src/stock.txt");
+    List<String>stringToWrite = new ArrayList<String>();
 
+    int i = 0;
+    sw = "Unitées de Salade: " + (starter.get(i)-salades);
+    stringToWrite.add(sw);
+    stockage.add(salades);
+    i++;
+    sw = "Unitées de Tomate: " + ((starter.get(i))-tomates);
+    stockage.add(tomates);
+    stringToWrite.add(sw);
+    i++;
+    sw = "Unitées de Oignon: " + (starter.get(i)-oignons);
+    stockage.add(oignons);
+    stringToWrite.add(sw);
+    i++;
+    sw = "Unitées de Champignon: " + (starter.get(i)-champignons);
+    stockage.add(champignons);
+    stringToWrite.add(sw);
+    i++;
+    sw = "Unitées de Pain: " + (starter.get(i)-pains);
+    stockage.add(pains);
+    stringToWrite.add(sw);
+    i++;
+    sw = "Unitées de Steak: " + (starter.get(i)-steaks);
+    stockage.add(steaks);
+    stringToWrite.add(sw);
+    i++;
+    sw = "Unitées de Fromage: " + (starter.get(i)-fromages);
+    stockage.add(fromages);
+    stringToWrite.add(sw);
+    i++;
+    sw = "Unitées de Saucisse: " + (starter.get(i)-saucisses);
+    stockage.add(saucisses);
+    stringToWrite.add(sw);
+    i++;
+    sw = "Unitées de Pate: " + (starter.get(i)-pates);
+    stockage.add(pates);
+    stringToWrite.add(sw);
+    i++;
+    sw = "Unitées de Limonade: " + (starter.get(i)-limonades);
+    stockage.add(limonades);
+    stringToWrite.add(sw);
+    i++;
+    sw = "Unitées de Cidre doux: " + (starter.get(i)-cidres);
+    stockage.add(cidres);
+    stringToWrite.add(sw);
+    i++;
+    sw = "Unitées de Bieresa: " + (starter.get(i)-bieresa);
+    stockage.add(bieresa);
+    stringToWrite.add(sw);
+    i++;
+    sw = "Unitées de Jus de fruit: " + (starter.get(i)-jdf);
+    stockage.add(jdf);
+    stringToWrite.add(sw);
+    writeOnFile(file, stringToWrite);
+  }
+
+  public static void showStock(){    //Function to display all stocks
+  String a;
+  do{
+    System.out.println("Unitées de Salade: " + salades);
+    System.out.println("Unitées de Tomate: " + tomates);
+    System.out.println("Unitées de Oignon: " + oignons);
+    System.out.println("Unitées de Champignon: " + champignons);
+    System.out.println("Unitées de Pain: " + pains);
+    System.out.println("Unitées de Steak: " + steaks);
+    System.out.println("Unitées de Fromage: " + fromages);
+    System.out.println("Unitées de Saucisse: " + saucisses);
+    System.out.println("Unitées de Pate: " + pates);
+
+
+    System.out.println("Unitées de Limonade: " + limonades);
+    System.out.println("Unitées de Cidre doux: " + cidres);
+    System.out.println("Unitées de Bieresa: " + bieresa);
+    System.out.println("Unitées de Jus de fruit: " + jdf);
+    System.out.println("(ok)");
+    Scanner scannerSS = new Scanner(System.in);
+    a = scannerSS.nextLine();
+  }
+  while((!a.equals("ok")));
 }
+
+  public static boolean inventory(Scanner scanner){
+  String sw;
+  File file = new File(homedir, "/Documents/Java/src/stock.txt");
+  List<String>stringToWrite = new ArrayList<String>();
+
+  System.out.println("Unitées de Salade: ");
+  salades = scanner.nextInt();
+  starter.add(salades);
+  sw = "Unitées de Salade: " + salades;
+  stringToWrite.add(sw);
+  clear();
+
+  System.out.println("Unitées de Tomate: ");
+  tomates = scanner.nextInt();
+  starter.add(tomates);
+  sw = "Unitées de Tomate: " + tomates;
+  stringToWrite.add(sw);
+  clear();
+
+  System.out.println("Unitées de Oignon: ");
+  oignons = scanner.nextInt();
+  starter.add(oignons);
+  sw = "Unitées de Oignon: " + oignons;
+  stringToWrite.add(sw);
+  clear();
+
+  System.out.println("Unitées de Champignon: ");
+  champignons = scanner.nextInt();
+  starter.add(champignons);
+  sw = "Unitées de Champignon: " + champignons;
+  stringToWrite.add(sw);
+  clear();
+
+  System.out.println("Unitées de Pain: ");
+  pains = scanner.nextInt();
+  starter.add(pains);
+  sw = "Unitées de Pain: " + pains;
+  stringToWrite.add(sw);
+  clear();
+
+  System.out.println("Unitées de Steak: ");
+  steaks = scanner.nextInt();
+  starter.add(steaks);
+  sw = "Unitées de Steak: " + steaks;
+  stringToWrite.add(sw);
+  clear();
+
+  System.out.println("Unitées de Fromage: ");
+  fromages = scanner.nextInt();
+  starter.add(fromages);
+  sw = "Unitées de Fromage: " + fromages;
+  stringToWrite.add(sw);
+  clear();
+
+  System.out.println("Unitées de Saucisse: ");
+  saucisses = scanner.nextInt();
+  starter.add(saucisses);
+  sw = "Unitées de Saucisse: " + saucisses;
+  stringToWrite.add(sw);
+  clear();
+
+  System.out.println("Unitées de Pates: ");
+  pates = scanner.nextInt();
+  starter.add(pates);
+  sw = "Unitées de Pate: " + pates;
+  stringToWrite.add(sw);
+  clear();
+
+  System.out.println("Unitées de Limonade: ");
+  limonades = scanner.nextInt();
+  starter.add(limonades);
+  sw = "Unitées de Limonade: " + limonades;
+  stringToWrite.add(sw);
+  clear();
+
+  System.out.println("Unitées de Cidre doux: ");
+  cidres = scanner.nextInt();
+  starter.add(cidres);
+  sw = "Unitées de Cidre doux: " + cidres;
+  stringToWrite.add(sw);
+  clear();
+
+  System.out.println("Unitées de Bieresa: ");
+  bieresa = scanner.nextInt();
+  starter.add(bieresa);
+  sw = "Unitées de Bieresa: " + bieresa;
+  stringToWrite.add(sw);
+  clear();
+
+  System.out.println("Unitées de Jus de fruit: ");
+  jdf = scanner.nextInt();
+  starter.add(jdf);
+  sw = "Unitées de Jus de fruit: " + jdf;
+  stringToWrite.add(sw);
+  clear();
+
+  writeOnFile(file, stringToWrite);
+  return true;
+}
+
+  public static int verifyStocks(int index, int nbr){
+    if(stockage.get(index) < nbr){
+      return 0;
+    }
+    else{
+      return 1;
+    }
+  }
+
+  public static void removeStockPlat(Plat plat){
+    int type = plat.getType();
+    int option = plat.getOptions();
+    if(type == 1){
+      salades = salades - 1;
+      if(option == 1){
+      }
+      else if(option == 2){
+        tomates = tomates - 1;
+      }
+    }
+    //potage
+    else if(type == 2){
+      if(option == 1){
+        oignons = oignons - 3;
+      }
+      else if(option == 2){
+        tomates = tomates - 3;
+      }
+      else if(option == 3){
+        champignons = champignons - 3;
+      }
+    }
+    //burger
+    else if(type == 3){
+      pains = pains - 1;
+      steaks = steaks -1;
+      if(option == 1){
+      }
+      else if(option == 2){
+        salades = salades - 1;
+      }
+      else if(option == 3){
+        salades = salades - 1;
+        tomates = tomates - 1;
+      }
+    }
+    //pizza
+    else if(type == 4){
+      pates = pates - 1;
+      if(option == 1){
+        tomates--;
+        fromages--;
+      }
+      else if(option == 2){
+        tomates = tomates - 1;
+        fromages = fromages - 1;
+        champignons = champignons - 1;
+      }
+      else if(option == 3){
+        tomates = tomates - 1;
+        fromages = fromages - 1;
+        saucisses = saucisses - 1;
+      }
+    }
+    refreshStocks();
+  }
+
+  public static void removeStockBoisson(Boisson boisson){
+    int type = boisson.getType();
+    if(type == 1){
+      limonades = limonades - 1;
+    }
+    else if (type == 2){
+      cidres = cidres - 1;
+    }
+    else if (type == 3){
+    bieresa = bieresa - 1;
+    }
+    else if (type == 4){
+      jdf = jdf - 1;
+    }
+    refreshStocks();
+  }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Payement + Facture + Suppr cmd~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public static void encaissement(Scanner scanner){
     String name = "nobody";
     for(cmd l: listCmd){
       for(Employee e: listEmployee){
-        if(e.getTable() == l.getTable()){
+        if(e.getTable() == l.getTable() && l.getStatus() == 1){
           name = e.getName();
           break;
         }
       }
       System.out.println("Table: " + l.getTable() + " : " + name);
     }
-    System.out.println("Table à facturer :");
-    int tablePaid = scanner.nextInt();
-    Facture(tablePaid);
+    if(!(name.equals("nobody"))){
+      System.out.println("Table à facturer :");
+      int tablePaid = scanner.nextInt();
+      Facture(tablePaid);
+    }
+    else{
+      String a;
+      do{
+        System.out.println("Aucune commande a encaisser (ok)");
+        Scanner scannerE = new Scanner(System.in);
+        a = scannerE.nextLine();
+      }
+      while(!(a.equals("ok")));
+    }
   }
 
   public static void Facture(int table){   //Function to display all cmd
@@ -279,6 +602,12 @@ public static void stockDisplay(){    //Function to display all stocks
     int prixTotal = 0;
     for (cmd c: listCmd){
       if(c.getTable() == table){
+        System.out.println("En combien de paiements ?");
+        Scanner scannerF = new Scanner(System.in);
+        int nbrPaiements = scannerF.nextInt();
+        if(nbrPaiements <= c.getClients()){
+          stringToWrite.add("Facture payée en " + nbrPaiements + " fois.");
+        }
         c.setStatus(2);
         stringToWrite.add("_____________________________________");
         stringToWrite.add("~~~~~~~~~~~~~~Table " + c.getTable() + " ~~~~~~~~~~~~~~~");
@@ -304,6 +633,7 @@ public static void stockDisplay(){    //Function to display all stocks
           }
           //Requested from MONITORING
           stringToWrite.add("------------Total : " + prixTotal + " €------------");
+          sellStats += prixTotal;
           stringToWrite.add(getDate());
           stringToWrite.add("_____________________________________");
         }
@@ -356,6 +686,7 @@ public static void stockDisplay(){    //Function to display all stocks
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Prise de Commande~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   public static void initEPC(Scanner scanner, Employee employee){    //Function init Ecran Prise Commande
     clear();
+    refreshStocks();
     String a = "ok";
     String go;
     //Determine nbrTable and nbrClients
@@ -370,7 +701,7 @@ public static void stockDisplay(){    //Function to display all stocks
     if(!stop){
       clear();
       do{
-        System.out.println("Table déjà prise");
+        System.out.println("Table déjà prise (ok)");
         Scanner scannerVerif = new Scanner(System.in);
         go = scannerVerif.nextLine();
       }
@@ -389,32 +720,53 @@ public static void stockDisplay(){    //Function to display all stocks
     clear();
     actualCmd = new cmd(nbrClients, nbrTable);    //Creation of a new cmd
     listCmd.add(actualCmd);   //we add it to our listCmd
+    cmdStats++;
     int clientsDone = 0;
-    int exit = 0;
+    int i = 0;
 
     while(clientsDone < (2 *nbrClients)){//while for boissons and plats
       clear();
-      //We start by boissons
+      //We start by boisson
       if(clientsDone < nbrClients){
         System.out.println("0- pas de boisson");
-        System.out.println("1- Limonade");
-        System.out.println("2- Cidre doux");
-        System.out.println("3- Bière sans alcool");
-        System.out.println("4- Jus de fruit");
+        if(verifyStocks(9, 1) == 1){
+          System.out.println("1- Limonade");
+        }
+        if(verifyStocks(10, 1) == 1){
+          System.out.println("2- Cidre doux");
+        }
+        if(verifyStocks(11, 1) == 1){
+          System.out.println("3- Bière sans alcool");
+        }
+        if(verifyStocks(12, 1) == 1){
+          System.out.println("4- Jus de fruit");
+        }
         System.out.println("5- Verre d'eau");
         int choixBoisson = scanner.nextInt();
         //System.out.println(choixBoisson);
         if(choixBoisson != 0){
           actualCmd.addBoisson(choixBoisson);
+          removeStockBoisson(actualCmd.getBoissonnbr(clientsDone));
         }
       }
       else{
       //Once all boissons done we take Plats
       System.out.println("0- pas de plat");
-      System.out.println("1- Salade");
-      System.out.println("2- Potage");
-      System.out.println("3- Burgers");
-      System.out.println("4- Pizzas");
+      if(verifyStocks(0, 1) == 1){
+        System.out.println("1- Salade");
+      }
+
+      if(verifyStocks(1, 3) == 1 || verifyStocks(2, 3) == 1 || verifyStocks(3, 3) == 1){
+        System.out.println("2- Potage");
+      }
+
+      if(verifyStocks(4, 1) == 1 && verifyStocks(5, 1) == 1){
+        System.out.println("3- Burgers");
+      }
+
+      if(verifyStocks(8, 1) == 1 && verifyStocks(6, 1) == 1 && verifyStocks(1, 1) == 1){
+        System.out.println("4- Pizzas");
+      }
       int choix = scanner.nextInt();
 
       clear();
@@ -423,29 +775,47 @@ public static void stockDisplay(){    //Function to display all stocks
       if(choix == 1){//Salade
         System.out.println("Options disponibles pour la salade :");
         System.out.println("1- classique");
-        System.out.println("2- option tomate");
+        if(verifyStocks(1, 1) == 1){
+          System.out.println("2- option tomate");
+        }
       }
       else if(choix == 2){ //Potage
         System.out.println("Options disponibles pour le potage :");
-        System.out.println("1- oignon");
-        System.out.println("2- tomate");
-        System.out.println("3- champignon");
+        if(verifyStocks(2, 3) == 1){
+          System.out.println("1- oignon");
+        }
+        if(verifyStocks(1, 3) == 1){
+          System.out.println("2- tomate");
+        }
+        if(verifyStocks(3, 3) == 1){
+          System.out.println("3- champignon");
+        }
       }
       else if(choix == 3){//Burger
         System.out.println("Options disponibles pour le burger :");
         System.out.println("1- classique");
-        System.out.println("2- option Salade");
-        System.out.println("3- option salade tomate");
+        if(verifyStocks(0, 1) == 1){
+          System.out.println("2- option Salade");
+        }
+        if(verifyStocks(1, 1) == 1 && verifyStocks(0, 1) == 1){
+          System.out.println("3- option salade tomate");
+        }
       }
       else if(choix == 4){//Pizza
         System.out.println("Options disponibles pour la pizza :");
         System.out.println("1- classique");
-        System.out.println("2- option champignon");
-        System.out.println("3- option saucisse");
+        if(verifyStocks(3, 1) == 1){
+          System.out.println("2- option champignon");
+        }
+        if(verifyStocks(7, 1) == 1){
+          System.out.println("3- option saucisse");
+        }
       }
 
       int choixGout = scanner.nextInt();
       actualCmd.addPlat(choix, choixGout);
+      removeStockPlat(actualCmd.getPlatnbr(i));
+      i++;
       }
 
     }
@@ -456,16 +826,68 @@ public static void stockDisplay(){    //Function to display all stocks
   }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Suivi de commande~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  public static void showCmd(Scanner scanner, int ecran){
+    clear();
+    String status;
+    for(cmd c: listCmd){
+      if(c.getStatusPlat() == 1 && c.getStatusBoisson() == 1){
+        c.setStatus(1);
+      }
+      else if(c.getStatus() == 0){
+        do{
+          System.out.println("Table " + c.getTable());
+          if(ecran == 0){
+            for(Plat p: c.getListPlat()){
+              System.out.println(p.getPlat());
+            }
+          }
+          else if(ecran == 1){
+            for(Boisson b: c.getListBoisson()){
+              System.out.println(b.getBoisson());
+            }
+          }
+          System.out.println("");
+          System.out.println("Commande prête (y/n) ?");
+          Scanner scannerS = new Scanner(System.in);
+          status = scannerS.nextLine();
+        }
+        while(!(status.equals("y")));
+        if(ecran == 0){
+          c.setStatusPlat(1);
+        }
+        else if(ecran == 1){
+          c.setStatusBoisson(1);
+        }
+      }
+
+
+    }
+  }
+
   public static void Eb(Scanner scanner){   //Function Ecran Bar
     clear();
     System.out.println("1-Stocks");
     System.out.println("2-Commandes");
     int choixbar = scanner.nextInt();
     if(choixbar == 1){
-      stockDisplay();
+      showStock();
     }
-    else{
-      //cmdStatus(scanner, 2);
+    else if(choixbar == 2){
+      showCmd(scanner, 1);
+    }
+    System.out.println("Voici la prochaine commande : ");
+  }
+
+  public static void Ec(Scanner scanner){   //Function Ecran Bar
+    clear();
+    System.out.println("1-Stocks");
+    System.out.println("2-Commandes");
+    int choixbar = scanner.nextInt();
+    if(choixbar == 1){
+      showStock();
+    }
+    else if(choixbar == 2){
+      showCmd(scanner, 0);
     }
     System.out.println("Voici la prochaine commande : ");
   }

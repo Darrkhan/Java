@@ -22,6 +22,12 @@ public class Plat{
   public int getPrix(){
     return this.prix;
   }
+  public int getType(){
+    return this.type;
+  }
+  public int getOptions(){
+    return this.option;
+  }
   public String getPlat(){
     String plat;
     //salade

@@ -20,6 +20,9 @@ public class Employee{
   public int getEveningWorked(){
     return this.eveningWorked;
   }
+  public void setEveningWorked(int ew){
+    this.eveningWorked = ew;
+  }
   public int getWork(){
     return this.work;
   }
