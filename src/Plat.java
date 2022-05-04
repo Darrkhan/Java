@@ -3,6 +3,7 @@ public class Plat{
   private int type; // 1 = Salade; 2 = Potage; 3 = Burger; 4 = Pizza
   private int option;
   private int prix;
+
   public Plat(int type, int option){
     this.type = type;
     this.option = option;
@@ -22,15 +23,19 @@ public class Plat{
       this.prix = 11;
     }
   }
+
   public int getPrix(){
     return this.prix;
   }
+
   public int getType(){
     return this.type;
   }
+
   public int getOptions(){
     return this.option;
   }
+  
   public String getPlat(){
     String plat;
     //salade

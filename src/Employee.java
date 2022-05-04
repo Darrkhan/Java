@@ -11,21 +11,27 @@ public class Employee{
     this.eveningWorked = ew;
     this.work = work;
   }
+
   public void affectTable(int nt){
     this.tableAffected = nt;
   }
+
   public String getName(){
     return this.name;
   }
+
   public int getEveningWorked(){
     return this.eveningWorked;
   }
+
   public void setEveningWorked(int ew){
     this.eveningWorked = ew;
   }
+
   public int getWork(){
     return this.work;
   }
+  
   public int getTable(){
     return this.tableAffected;
   }
